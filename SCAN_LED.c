@@ -46,11 +46,6 @@ void    SCAN_LED(void)
     byte2 = 0;
     byte3 = 0;
 
-    Uint_data_led1 = 1234;
-    Uint_data_led2 = 5678;
-    Uint_data_led3 = 1357;
-    Uint_data_led4 = 2468;
-
     Uc_Select_led++;
     bit_left <<= (Uc_Select_led-1);
     if(Uc_Select_led > 8)   

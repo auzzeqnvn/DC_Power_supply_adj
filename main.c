@@ -11,7 +11,10 @@ Date    : 29/11/2018
 Author  : 
 Company : 
 Comments: 
-
+Uint_data_led1 = Dien ap am*10
+Uint_data_led2 = Cuong do dong dien am*10
+Uint_data_led3 = Dien ap duong*10
+Uint_data_led4 = Cuong do dong dien duong*10
 
 Chip type               : ATmega8A
 Program type            : Application
@@ -35,15 +38,20 @@ Data Stack size         : 256
 #define PROTECT_ON   CONTROL_RELAY  = 1
 #define PROTECT_OFF   CONTROL_RELAY  = 0
 
-#define ADC_I_POSITIVE_SET  100
-#define ADC_U_POSITIVE_SET  100
-#define ADC_I_NEGATIVE_SET  100
-#define ADC_U_NEGATIVE_SET  100
+#define ADC_I_POSITIVE_SET  500
+#define ADC_U_POSITIVE_SET  300
+#define ADC_I_NEGATIVE_SET  500
+#define ADC_U_NEGATIVE_SET  300
 
 #define ADC_I_POSITIVE_RATIO  100
-#define ADC_U_POSITIVE_RATIO  100
+#define ADC_U_POSITIVE_RATIO  370
 #define ADC_I_NEGATIVE_RATIO  100
-#define ADC_U_NEGATIVE_RATIO  100
+#define ADC_U_NEGATIVE_RATIO  370
+
+#define TIME_UPDATE_DISPLAY 200
+
+#define NUM_SAMPLE  30
+#define NUM_FILTER  10
 
 unsigned char   Uc_I_Positive_Over = 0;
 unsigned char   Uc_U_Positive_Over = 0;
@@ -54,6 +62,13 @@ unsigned char   Uc_I_Positive_Under = 0;
 unsigned char   Uc_U_Positive_Under = 0;
 unsigned char   Uc_I_Negative_Under = 0;
 unsigned char   Uc_U_Negative_Under = 0;
+
+unsigned int   Uint_U_Positive_Buff[NUM_SAMPLE];
+unsigned int   Uint_U_Negative_Buff[NUM_SAMPLE];
+unsigned int   Uint_I_Positive_Buff[NUM_SAMPLE];
+unsigned int   Uint_I_Negative_Buff[NUM_SAMPLE];
+
+unsigned char   Uc_Buffer_count = 0;
 
 bit     Bit_I_Positive_Warning = 0;
 bit     Bit_U_Positive_Warning = 0;
@@ -70,6 +85,7 @@ interrupt [TIM1_OVF] void timer1_ovf_isr(void)
     // Reinitialize Timer1 value
     TCNT1H=0x9380 >> 8;
     TCNT1L=0x9380 & 0xff;
+    if(Uint_Timer_Display < TIME_UPDATE_DISPLAY)    Uint_Timer_Display++;
     // Place your code here
     SCAN_LED();
 
@@ -95,11 +111,42 @@ unsigned int read_adc(unsigned char adc_input)
 void    PROTECT(void)
 {
     unsigned int    Uint_ADC_Value;
+    unsigned char   Uc_Loop_count,Uc_Loop2_count;
+    unsigned long int Ul_Sum;
+    unsigned int    Uint_Buff_Temp[NUM_SAMPLE];
+    unsigned int    Uint_temp;
 
     /* I Negative */
-    Uint_ADC_Value = read_adc(ADC_I_NEGATIVE);
-    Uint_data_led2 = Uint_ADC_Value*ADC_I_NEGATIVE_RATIO/1024;
-    if(Uint_ADC_Value > ADC_I_NEGATIVE_SET)
+    Uint_I_Negative_Buff[Uc_Buffer_count] = read_adc(ADC_I_NEGATIVE);
+    if(Uint_Timer_Display >= TIME_UPDATE_DISPLAY)
+    {
+        /* Chuyen sang bo nho dem */
+        for(Uc_Loop_count = 0; Uc_Loop_count < NUM_SAMPLE; Uc_Loop_count++) 
+        {
+            Uint_Buff_Temp[Uc_Loop_count] = Uint_I_Negative_Buff[Uc_Loop_count];
+        }
+        /* Sap xep bo nho dem tu min -> max */
+        for(Uc_Loop_count = 0; Uc_Loop_count < NUM_SAMPLE; Uc_Loop_count++) 
+        {
+            for(Uc_Loop2_count = Uc_Loop_count; Uc_Loop2_count < NUM_SAMPLE; Uc_Loop2_count++) 
+            {
+                if(Uint_Buff_Temp[Uc_Loop_count] > Uint_Buff_Temp[Uc_Loop2_count])
+                {
+                    Uint_temp = Uint_Buff_Temp[Uc_Loop_count];
+                    Uint_Buff_Temp[Uc_Loop_count] = Uint_Buff_Temp[Uc_Loop2_count];
+                    Uint_Buff_Temp[Uc_Loop2_count] = Uint_temp;
+                }
+            }
+        }
+        /* Low filter & hight filter */
+        Ul_Sum = 0;
+        for(Uc_Loop_count = NUM_FILTER; Uc_Loop_count < (NUM_SAMPLE-NUM_FILTER); Uc_Loop_count++)
+        {
+            Ul_Sum += Uint_Buff_Temp[Uc_Loop_count];
+        }
+        Uint_data_led4 = (unsigned int)((float)Ul_Sum*ADC_U_NEGATIVE_RATIO/(1024*(NUM_SAMPLE-2*NUM_FILTER)));
+    }
+    if(Uint_data_led4 > ADC_I_NEGATIVE_SET)
     {
         Uc_I_Negative_Over++;
         if(Uc_I_Negative_Over > 10)
@@ -120,9 +167,36 @@ void    PROTECT(void)
         }
     }
     /* I Positive */
-    Uint_ADC_Value = read_adc(ADC_I_POSITIVE);
-    Uint_data_led4 = Uint_ADC_Value*ADC_I_POSITIVE_RATIO/1024;
-    if(Uint_ADC_Value > ADC_I_POSITIVE_SET)
+    Uint_I_Positive_Buff[Uc_Buffer_count] = read_adc(ADC_I_POSITIVE);
+    if(Uint_Timer_Display >= TIME_UPDATE_DISPLAY)
+    {
+        /* Chuyen sang bo nho dem */
+        for(Uc_Loop_count = 0; Uc_Loop_count < NUM_SAMPLE; Uc_Loop_count++) 
+        {
+            Uint_Buff_Temp[Uc_Loop_count] = Uint_I_Positive_Buff[Uc_Loop_count];
+        }
+        /* Sap xep bo nho dem tu min -> max */
+        for(Uc_Loop_count = 0; Uc_Loop_count < NUM_SAMPLE; Uc_Loop_count++) 
+        {
+            for(Uc_Loop2_count = Uc_Loop_count; Uc_Loop2_count < NUM_SAMPLE; Uc_Loop2_count++) 
+            {
+                if(Uint_Buff_Temp[Uc_Loop_count] > Uint_Buff_Temp[Uc_Loop2_count])
+                {
+                    Uint_temp = Uint_Buff_Temp[Uc_Loop_count];
+                    Uint_Buff_Temp[Uc_Loop_count] = Uint_Buff_Temp[Uc_Loop2_count];
+                    Uint_Buff_Temp[Uc_Loop2_count] = Uint_temp;
+                }
+            }
+        }
+        /* Low filter & hight filter */
+        Ul_Sum = 0;
+        for(Uc_Loop_count = NUM_FILTER; Uc_Loop_count < (NUM_SAMPLE-NUM_FILTER); Uc_Loop_count++)
+        {
+            Ul_Sum += Uint_Buff_Temp[Uc_Loop_count];
+        }
+        Uint_data_led2 = (unsigned int)((float)Ul_Sum*ADC_U_NEGATIVE_RATIO/(1024*(NUM_SAMPLE-2*NUM_FILTER)));
+    }
+    if(Uint_data_led4 > ADC_I_POSITIVE_SET)
     {
         Uc_I_Positive_Over++;
         if(Uc_I_Positive_Over > 10)
@@ -143,9 +217,36 @@ void    PROTECT(void)
         }
     }
     /* U Negative */
-    Uint_ADC_Value = read_adc(ADC_U_NEGATIVE);
-    Uint_data_led1 = Uint_ADC_Value*ADC_U_NEGATIVE_RATIO/1024;
-    if(Uint_ADC_Value > ADC_U_NEGATIVE_SET)
+    Uint_U_Negative_Buff[Uc_Buffer_count] = read_adc(ADC_U_NEGATIVE);
+    if(Uint_Timer_Display >= TIME_UPDATE_DISPLAY)
+    {
+        /* Chuyen sang bo nho dem */
+        for(Uc_Loop_count = 0; Uc_Loop_count < NUM_SAMPLE; Uc_Loop_count++) 
+        {
+            Uint_Buff_Temp[Uc_Loop_count] = Uint_U_Negative_Buff[Uc_Loop_count];
+        }
+        /* Sap xep bo nho dem tu min -> max */
+        for(Uc_Loop_count = 0; Uc_Loop_count < NUM_SAMPLE; Uc_Loop_count++) 
+        {
+            for(Uc_Loop2_count = Uc_Loop_count; Uc_Loop2_count < NUM_SAMPLE; Uc_Loop2_count++) 
+            {
+                if(Uint_Buff_Temp[Uc_Loop_count] > Uint_Buff_Temp[Uc_Loop2_count])
+                {
+                    Uint_temp = Uint_Buff_Temp[Uc_Loop_count];
+                    Uint_Buff_Temp[Uc_Loop_count] = Uint_Buff_Temp[Uc_Loop2_count];
+                    Uint_Buff_Temp[Uc_Loop2_count] = Uint_temp;
+                }
+            }
+        }
+        /* Low filter & hight filter */
+        Ul_Sum = 0;
+        for(Uc_Loop_count = NUM_FILTER; Uc_Loop_count < (NUM_SAMPLE-NUM_FILTER); Uc_Loop_count++)
+        {
+            Ul_Sum += Uint_Buff_Temp[Uc_Loop_count];
+        }
+        Uint_data_led1 = (unsigned int)((float)Ul_Sum*ADC_U_NEGATIVE_RATIO/(1024*(NUM_SAMPLE-2*NUM_FILTER)));
+    }
+    if(Uint_data_led1 > ADC_U_NEGATIVE_SET)
     {
         Uc_U_Negative_Over++;
         if(Uc_U_Negative_Over > 10)
@@ -166,9 +267,37 @@ void    PROTECT(void)
         }
     }
     /* U Positive */
-    Uint_ADC_Value = read_adc(ADC_U_POSITIVE);
-    Uint_data_led3 = Uint_ADC_Value*ADC_U_POSITIVE_RATIO/1024;
-    if(Uint_ADC_Value > ADC_U_POSITIVE_SET)
+    Uint_U_Positive_Buff[Uc_Buffer_count] = read_adc(ADC_U_POSITIVE);
+    if(Uint_Timer_Display >= TIME_UPDATE_DISPLAY)
+    {
+        /* Chuyen sang bo nho dem */
+        for(Uc_Loop_count = 0; Uc_Loop_count < NUM_SAMPLE; Uc_Loop_count++) 
+        {
+            Uint_Buff_Temp[Uc_Loop_count] = Uint_U_Positive_Buff[Uc_Loop_count];
+        }
+        /* Sap xep bo nho dem tu min -> max */
+        for(Uc_Loop_count = 0; Uc_Loop_count < NUM_SAMPLE; Uc_Loop_count++) 
+        {
+            for(Uc_Loop2_count = Uc_Loop_count; Uc_Loop2_count < NUM_SAMPLE; Uc_Loop2_count++) 
+            {
+                if(Uint_Buff_Temp[Uc_Loop_count] > Uint_Buff_Temp[Uc_Loop2_count])
+                {
+                    Uint_temp = Uint_Buff_Temp[Uc_Loop_count];
+                    Uint_Buff_Temp[Uc_Loop_count] = Uint_Buff_Temp[Uc_Loop2_count];
+                    Uint_Buff_Temp[Uc_Loop2_count] = Uint_temp;
+                }
+            }
+        }
+        /* Low filter & hight filter */
+        Ul_Sum = 0;
+        for(Uc_Loop_count = NUM_FILTER; Uc_Loop_count < (NUM_SAMPLE-NUM_FILTER); Uc_Loop_count++)
+        {
+            Ul_Sum += Uint_Buff_Temp[Uc_Loop_count];
+        }
+        Uint_data_led3 = (unsigned int)((float)Ul_Sum*ADC_U_POSITIVE_RATIO/(1024*(NUM_SAMPLE-2*NUM_FILTER)));
+        Uint_Timer_Display = 0;
+    }
+    if(Uint_data_led3 > ADC_U_POSITIVE_SET)
     {
         Uc_U_Positive_Over++;
         if(Uc_U_Positive_Over > 10)
@@ -188,6 +317,9 @@ void    PROTECT(void)
             Bit_U_Positive_Warning = 0;
         }
     }
+    Uc_Buffer_count++;
+    if(Uc_Buffer_count >= NUM_SAMPLE)    Uc_Buffer_count = 0;
+
     if(Bit_I_Negative_Warning || Bit_I_Positive_Warning || Bit_U_Positive_Warning || Bit_U_Negative_Warning)
     {
         PROTECT_ON;
@@ -336,10 +468,10 @@ void main(void)
 
     // Global enable interrupts
     #asm("sei")
-
+    PROTECT_OFF;
     while (1)
     {
     // Place your code here
-        //PROTECT();
+        PROTECT();
     }
 }

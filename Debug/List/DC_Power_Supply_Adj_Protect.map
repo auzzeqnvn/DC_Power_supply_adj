@@ -5,8 +5,13 @@ Uint_data_led1                                                                  
 Uint_data_led2                                                                    0x0202       2
 Uint_data_led3                                                                    0x0204       2
 Uint_data_led4                                                                    0x0206       2
-Uc_Select_led                                                                     0x0208       1
-BCDLED                                                                            0x0209      11
+Uint_U_Positive_Buff                                                              0x0208      60
+Uint_U_Negative_Buff                                                              0x0244      60
+Uint_I_Positive_Buff                                                              0x0280      60
+Uint_I_Negative_Buff                                                              0x02BC      60
+Uint_Timer_Display                                                                0x02F8       2
+Uc_Select_led                                                                     0x02FA       1
+BCDLED                                                                            0x02FB      11
 
 EEPROM Allocation [bytes]
 Variable                                                                          Address   Size
@@ -23,17 +28,19 @@ Uc_I_Positive_Under                                                             
 Uc_U_Positive_Under                                                               R8           1
 Uc_I_Negative_Under                                                               R11          1
 Uc_U_Negative_Under                                                               R10          1
+Uc_Buffer_count                                                                   R13          1
 Bit_I_Positive_Warning                                                            GPIOR0.0  1bit
 Bit_U_Positive_Warning                                                            GPIOR0.1  1bit
 Bit_I_Negative_Warning                                                            GPIOR0.2  1bit
 Bit_U_Negative_Warning                                                            GPIOR0.3  1bit
-Uint_Timer_Display                                                                R12,R13      2
 
 FLASH Allocation [words]
 Function                                                                          Address   Size
 ------------------------------------------------------------------------------------------------
-timer1_ovf_isr                                                                    0x0005D     30
-main                                                                              0x0007B     91
-SEND_DATA_LED                                                                     0x000D6     41
-SCAN_LED                                                                          0x000FF    134
-SPI_SENDBYTE                                                                      0x00185     27
+timer1_ovf_isr                                                                    0x0005D     39
+read_adc                                                                          0x00084     27
+PROTECT                                                                           0x0009F    330
+main                                                                              0x001E9     93
+SEND_DATA_LED                                                                     0x00246     41
+SCAN_LED                                                                          0x0026F    110
+SPI_SENDBYTE                                                                      0x002DD     27

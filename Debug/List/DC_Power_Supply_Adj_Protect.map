@@ -9,9 +9,9 @@ Uint_U_Positive_Buff                                                            
 Uint_U_Negative_Buff                                                              0x0244      60
 Uint_I_Positive_Buff                                                              0x0280      60
 Uint_I_Negative_Buff                                                              0x02BC      60
-Uint_Timer_Display                                                                0x02F8       2
-Uc_Select_led                                                                     0x02FA       1
-BCDLED                                                                            0x02FB      11
+Uint_Turnoff_relay_timer                                                          0x02F8       2
+Uint_Timer_Display                                                                0x02FA       2
+BCDLED                                                                            0x02FC      11
 
 EEPROM Allocation [bytes]
 Variable                                                                          Address   Size
@@ -33,14 +33,15 @@ Bit_I_Positive_Warning                                                          
 Bit_U_Positive_Warning                                                            GPIOR0.1  1bit
 Bit_I_Negative_Warning                                                            GPIOR0.2  1bit
 Bit_U_Negative_Warning                                                            GPIOR0.3  1bit
+Uc_Select_led                                                                     R12          1
 
 FLASH Allocation [words]
 Function                                                                          Address   Size
 ------------------------------------------------------------------------------------------------
-timer1_ovf_isr                                                                    0x0005D     39
-read_adc                                                                          0x00084     27
-PROTECT                                                                           0x0009F    330
-main                                                                              0x001E9     93
-SEND_DATA_LED                                                                     0x00246     41
-SCAN_LED                                                                          0x0026F    110
-SPI_SENDBYTE                                                                      0x002DD     27
+timer1_ovf_isr                                                                    0x0005A     40
+read_adc                                                                          0x00082     27
+PROTECT                                                                           0x0009D    378
+main                                                                              0x00217     93
+SEND_DATA_LED                                                                     0x00274     41
+SCAN_LED                                                                          0x0029D    105
+SPI_SENDBYTE                                                                      0x00306     27

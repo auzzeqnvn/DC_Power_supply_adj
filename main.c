@@ -28,9 +28,9 @@ Data Stack size         : 256
 #include <scan_led.h>
 #include <delay.h>
 
-#define ADC_I_POSITIVE  0
+#define ADC_I_POSITIVE  2
 #define ADC_U_POSITIVE  1
-#define ADC_I_NEGATIVE  2
+#define ADC_I_NEGATIVE  0
 #define ADC_U_NEGATIVE  3
 
 #define CONTROL_RELAY   PORTC.4
@@ -38,17 +38,20 @@ Data Stack size         : 256
 #define PROTECT_ON   CONTROL_RELAY  = 1
 #define PROTECT_OFF   CONTROL_RELAY  = 0
 
-#define ADC_I_POSITIVE_SET  500
+#define ADC_I_POSITIVE_SET  300
 #define ADC_U_POSITIVE_SET  300
-#define ADC_I_NEGATIVE_SET  500
+#define ADC_I_NEGATIVE_SET  300
 #define ADC_U_NEGATIVE_SET  300
 
-#define ADC_I_POSITIVE_RATIO  100
+#define ADC_I_POSITIVE_RATIO  3.056152//2.894736
 #define ADC_U_POSITIVE_RATIO  370
-#define ADC_I_NEGATIVE_RATIO  100
+#define ADC_I_NEGATIVE_RATIO  3.129425
 #define ADC_U_NEGATIVE_RATIO  370
 
 #define TIME_UPDATE_DISPLAY 200
+
+#define ADC_I_POSITIVE_ZERO 888
+#define ADC_I_NEGATIVE_ZERO 883
 
 #define NUM_SAMPLE  30
 #define NUM_FILTER  10
@@ -70,6 +73,8 @@ unsigned int   Uint_I_Negative_Buff[NUM_SAMPLE];
 
 unsigned char   Uc_Buffer_count = 0;
 
+unsigned int   Uint_Turnoff_relay_timer;
+
 bit     Bit_I_Positive_Warning = 0;
 bit     Bit_U_Positive_Warning = 0;
 bit     Bit_I_Negative_Warning = 0;
@@ -88,7 +93,7 @@ interrupt [TIM1_OVF] void timer1_ovf_isr(void)
     if(Uint_Timer_Display < TIME_UPDATE_DISPLAY)    Uint_Timer_Display++;
     // Place your code here
     SCAN_LED();
-
+    if(Uint_Turnoff_relay_timer < 500)    Uint_Turnoff_relay_timer++;
 }
 
 // Voltage Reference: AREF pin
@@ -117,7 +122,13 @@ void    PROTECT(void)
     unsigned int    Uint_temp;
 
     /* I Negative */
-    Uint_I_Negative_Buff[Uc_Buffer_count] = read_adc(ADC_I_NEGATIVE);
+    Uint_ADC_Value = (unsigned int) read_adc(ADC_I_NEGATIVE);
+    // Uint_data_led2 = Uint_ADC_Value;
+    // if(Uint_ADC_Value > ADC_I_NEGATIVE_ZERO)   Uint_ADC_Value = Uint_ADC_Value - ADC_I_NEGATIVE_ZERO;
+    // else    Uint_ADC_Value = 0;
+    // Uint_data_led2 = Uint_ADC_Value;
+    Uint_I_Negative_Buff[Uc_Buffer_count] = Uint_ADC_Value;
+    
     if(Uint_Timer_Display >= TIME_UPDATE_DISPLAY)
     {
         /* Chuyen sang bo nho dem */
@@ -144,9 +155,15 @@ void    PROTECT(void)
         {
             Ul_Sum += Uint_Buff_Temp[Uc_Loop_count];
         }
-        Uint_data_led4 = (unsigned int)((float)Ul_Sum*ADC_U_NEGATIVE_RATIO/(1024*(NUM_SAMPLE-2*NUM_FILTER)));
+        // Uint_data_led2 = (unsigned int)((float)Ul_Sum*ADC_I_NEGATIVE_RATIO/(NUM_SAMPLE-2*NUM_FILTER));
+        Uint_temp = (unsigned int)((float)Ul_Sum/(NUM_SAMPLE-2*NUM_FILTER));
+        // Uint_data_led1 = Uint_temp;
+        if(Uint_temp < ADC_I_NEGATIVE_ZERO) Uint_temp = ADC_I_NEGATIVE_ZERO - Uint_temp;
+        else    Uint_temp = 0;
+        Uint_data_led2 = Uint_temp*ADC_I_NEGATIVE_RATIO;
+
     }
-    if(Uint_data_led4 > ADC_I_NEGATIVE_SET)
+    if(Uint_data_led2 > ADC_I_NEGATIVE_SET)
     {
         Uc_I_Negative_Over++;
         if(Uc_I_Negative_Over > 10)
@@ -166,8 +183,12 @@ void    PROTECT(void)
             Bit_I_Negative_Warning = 0;
         }
     }
+
     /* I Positive */
-    Uint_I_Positive_Buff[Uc_Buffer_count] = read_adc(ADC_I_POSITIVE);
+    Uint_ADC_Value = read_adc(ADC_I_POSITIVE);
+    if(Uint_ADC_Value <= ADC_I_POSITIVE_ZERO)   Uint_ADC_Value = ADC_I_POSITIVE_ZERO - Uint_ADC_Value;
+    else    Uint_ADC_Value = 0;
+    Uint_I_Positive_Buff[Uc_Buffer_count] = Uint_ADC_Value;
     if(Uint_Timer_Display >= TIME_UPDATE_DISPLAY)
     {
         /* Chuyen sang bo nho dem */
@@ -194,7 +215,8 @@ void    PROTECT(void)
         {
             Ul_Sum += Uint_Buff_Temp[Uc_Loop_count];
         }
-        Uint_data_led2 = (unsigned int)((float)Ul_Sum*ADC_U_NEGATIVE_RATIO/(1024*(NUM_SAMPLE-2*NUM_FILTER)));
+        Uint_data_led4 = (unsigned int)((float)Ul_Sum*ADC_I_POSITIVE_RATIO/(NUM_SAMPLE-2*NUM_FILTER));
+        // Uint_data_led4 = (unsigned int)((float)Ul_Sum/(NUM_SAMPLE-2*NUM_FILTER));
     }
     if(Uint_data_led4 > ADC_I_POSITIVE_SET)
     {
@@ -323,8 +345,9 @@ void    PROTECT(void)
     if(Bit_I_Negative_Warning || Bit_I_Positive_Warning || Bit_U_Positive_Warning || Bit_U_Negative_Warning)
     {
         PROTECT_ON;
+        Uint_Turnoff_relay_timer = 0;
     }
-    else
+    else if(Uint_Turnoff_relay_timer >= 500)
     {
         PROTECT_OFF;
     }

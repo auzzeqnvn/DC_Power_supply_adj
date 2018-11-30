@@ -7,7 +7,7 @@ unsigned int    Uint_data_led3 = 0;
 unsigned int    Uint_data_led4 = 0;
 unsigned char   Uc_Select_led=1;
 
-unsigned char   BCDLED[11]={0xF9,0x21,0xEA,0x6B,0x33,0x5B,0xDB,0x29,0xFB,0x7B,0};
+unsigned char   BCDLED[11]={0xF9,0x21,0xEA,0x6B,0x33,0x5B,0xDB,0x29,0xFB,0x7B,0x02};
 
 /* Day du lieu quet led qua duong spi_software
 Co thẻ day tu 1 den 3 byte du lieu.
@@ -55,7 +55,7 @@ void    SCAN_LED(void)
     }
     /* 7-seg 1*/
     data = Uint_data_led1/1000;
-    byte1 = BCDLED[data];
+    byte1 = BCDLED[10];
     // byte1 = 0xFE;
     if((byte1 & bit_left)) byte3 |= 0x04;
     data = Uint_data_led1/100%10;
@@ -73,7 +73,7 @@ void    SCAN_LED(void)
     if(byte1 & bit_left) byte2 |= 0x10;
     /* 7-seg 2 */
     data = Uint_data_led2/1000;
-    byte1 = BCDLED[data];
+    byte1 = BCDLED[10];
     if(byte1 & bit_left) byte2 |= 0x20;
     data = Uint_data_led2/100%10;
     byte1 = BCDLED[data];

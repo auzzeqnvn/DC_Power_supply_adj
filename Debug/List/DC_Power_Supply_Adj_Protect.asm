@@ -6,7 +6,7 @@
 ;Build configuration    : Debug
 ;Chip type              : ATmega88P
 ;Program type           : Application
-;Clock frequency        : 8,000000 MHz
+;Clock frequency        : 8.000000 MHz
 ;Memory model           : Small
 ;Optimize for           : Size
 ;(s)printf features     : int, width
@@ -1590,7 +1590,7 @@ _0x8:
 ; 0000 00AC             Uc_I_Negative_Under = 0;
 	CLR  R11
 ; 0000 00AD             Bit_I_Negative_Warning = 1;
-	SBI  0x1E,2
+	SBI  0x1E,6
 ; 0000 00AE         }
 ; 0000 00AF     }
 _0x19:
@@ -1611,7 +1611,7 @@ _0x18:
 ; 0000 00B6             Uc_I_Negative_Over = 0;
 	CLR  R7
 ; 0000 00B7             Bit_I_Negative_Warning = 0;
-	CBI  0x1E,2
+	CBI  0x1E,6
 ; 0000 00B8         }
 ; 0000 00B9     }
 _0x1D:
@@ -1743,7 +1743,7 @@ _0x22:
 ; 0000 00E3             Uc_I_Positive_Under = 0;
 	CLR  R9
 ; 0000 00E4             Bit_I_Positive_Warning = 1;
-	SBI  0x1E,0
+	SBI  0x1E,4
 ; 0000 00E5         }
 ; 0000 00E6     }
 _0x31:
@@ -1764,7 +1764,7 @@ _0x30:
 ; 0000 00ED             Uc_I_Positive_Over = 0;
 	CLR  R5
 ; 0000 00EE             Bit_I_Positive_Warning = 0;
-	CBI  0x1E,0
+	CBI  0x1E,4
 ; 0000 00EF         }
 ; 0000 00F0     }
 _0x35:
@@ -1881,7 +1881,7 @@ _0x38:
 ; 0000 0115             Uc_U_Negative_Under = 0;
 	CLR  R10
 ; 0000 0116             Bit_U_Negative_Warning = 1;
-	SBI  0x1E,3
+	SBI  0x1E,7
 ; 0000 0117         }
 ; 0000 0118     }
 _0x47:
@@ -1902,7 +1902,7 @@ _0x46:
 ; 0000 011F             Uc_U_Negative_Over = 0;
 	CLR  R6
 ; 0000 0120             Bit_U_Negative_Warning = 0;
-	CBI  0x1E,3
+	CBI  0x1E,7
 ; 0000 0121         }
 ; 0000 0122     }
 _0x4B:
@@ -2023,7 +2023,7 @@ _0x4E:
 ; 0000 0148             Uc_U_Positive_Under = 0;
 	CLR  R8
 ; 0000 0149             Bit_U_Positive_Warning = 1;
-	SBI  0x1E,1
+	SBI  0x1E,5
 ; 0000 014A         }
 ; 0000 014B     }
 _0x5D:
@@ -2044,7 +2044,7 @@ _0x5C:
 ; 0000 0152             Uc_U_Positive_Over = 0;
 	CLR  R4
 ; 0000 0153             Bit_U_Positive_Warning = 0;
-	CBI  0x1E,1
+	CBI  0x1E,5
 ; 0000 0154         }
 ; 0000 0155     }
 _0x61:
@@ -2059,13 +2059,13 @@ _0x60:
 ; 0000 0158 
 ; 0000 0159     if(Bit_I_Negative_Warning || Bit_I_Positive_Warning || Bit_U_Positive_Warning || Bit_U_Negative_Warning)
 _0x64:
-	SBIC 0x1E,2
+	SBIC 0x1E,6
 	RJMP _0x66
-	SBIC 0x1E,0
+	SBIC 0x1E,4
 	RJMP _0x66
-	SBIC 0x1E,1
+	SBIC 0x1E,5
 	RJMP _0x66
-	SBIS 0x1E,3
+	SBIS 0x1E,7
 	RJMP _0x65
 _0x66:
 ; 0000 015A     {
@@ -2332,7 +2332,14 @@ _0x73:
 ;unsigned int    Uint_data_led4 = 0;
 ;unsigned char   Uc_Select_led=1;
 ;
-;unsigned char   BCDLED[11]={0xF9,0x21,0xEA,0x6B,0x33,0x5B,0xDB,0x29,0xFB,0x7B,0x02};
+;bit Bit_led_1_warning = 0;
+;bit Bit_led_2_warning = 0;
+;bit Bit_led_3_warning = 0;
+;bit Bit_led_4_warning = 0;
+;
+;unsigned int   Uint_warning_count;
+;
+;unsigned char   BCDLED[12]={0xF9,0x21,0xEA,0x6B,0x33,0x5B,0xDB,0x29,0xFB,0x7B,0x02,0x00};
 
 	.DSEG
 ;
@@ -2345,14 +2352,14 @@ _0x73:
 ;data_third ; du lieu thu 3
 ;*/
 ;void    SEND_DATA_LED(unsigned char num_bytes,unsigned char  byte_1,unsigned char  byte_2,unsigned char  byte_3)
-; 0001 0015 {
+; 0001 001C {
 
 	.CSEG
 _SEND_DATA_LED:
 ; .FSTART _SEND_DATA_LED
-; 0001 0016     unsigned char   i;
-; 0001 0017     unsigned char   data[6];
-; 0001 0018     for(i=0;i<6;i++)    data[i] = 0;
+; 0001 001D     unsigned char   i;
+; 0001 001E     unsigned char   data[6];
+; 0001 001F     for(i=0;i<6;i++)    data[i] = 0;
 	ST   -Y,R26
 	SBIW R28,6
 	ST   -Y,R17
@@ -2372,17 +2379,17 @@ _0x20005:
 	SUBI R17,-1
 	RJMP _0x20005
 _0x20006:
-; 0001 0019 data[0] = byte_1;
+; 0001 0020 data[0] = byte_1;
 	LDD  R30,Y+9
 	STD  Y+1,R30
-; 0001 001A     data[1] = byte_2;
+; 0001 0021     data[1] = byte_2;
 	LDD  R30,Y+8
 	STD  Y+2,R30
-; 0001 001B     data[2] = byte_3;
+; 0001 0022     data[2] = byte_3;
 	LDD  R30,Y+7
 	STD  Y+3,R30
-; 0001 001C 
-; 0001 001D     for(i=0;i<(num_bytes - 1);i++)    SPI_SENDBYTE(data[i],0);
+; 0001 0023 
+; 0001 0024     for(i=0;i<(num_bytes - 1);i++)    SPI_SENDBYTE(data[i],0);
 	LDI  R17,LOW(0)
 _0x20008:
 	LDD  R30,Y+10
@@ -2401,13 +2408,13 @@ _0x20008:
 	SUBI R17,-1
 	RJMP _0x20008
 _0x20009:
-; 0001 001E SPI_SENDBYTE(data[i],1);
+; 0001 0025 SPI_SENDBYTE(data[i],1);
 	RCALL SUBOPT_0x1D
 	LD   R30,X
 	ST   -Y,R30
 	LDI  R26,LOW(1)
 	RCALL _SPI_SENDBYTE
-; 0001 001F }
+; 0001 0026 }
 	LDD  R17,Y+0
 	ADIW R28,11
 	RET
@@ -2420,13 +2427,13 @@ _0x20009:
 ;data: Du lieu hien thi tren led.
 ;*/
 ;void    SCAN_LED(void)
-; 0001 0028 {
+; 0001 002F {
 _SCAN_LED:
 ; .FSTART _SCAN_LED
-; 0001 0029     unsigned char   byte1,byte2,byte3;
-; 0001 002A     unsigned char    data;
-; 0001 002B     unsigned char   bit_left;
-; 0001 002C     bit_left = 0x01;
+; 0001 0030     unsigned char   byte1,byte2,byte3;
+; 0001 0031     unsigned char    data;
+; 0001 0032     unsigned char   bit_left;
+; 0001 0033     bit_left = 0x01;
 	RCALL __SAVELOCR6
 ;	byte1 -> R17
 ;	byte2 -> R16
@@ -2434,205 +2441,447 @@ _SCAN_LED:
 ;	data -> R18
 ;	bit_left -> R21
 	LDI  R21,LOW(1)
-; 0001 002D     byte1 = 0;
+; 0001 0034     byte1 = 0;
 	LDI  R17,LOW(0)
-; 0001 002E     byte2 = 0;
+; 0001 0035     byte2 = 0;
 	LDI  R16,LOW(0)
-; 0001 002F     byte3 = 0;
+; 0001 0036     byte3 = 0;
 	LDI  R19,LOW(0)
-; 0001 0030 
-; 0001 0031     Uc_Select_led++;
+; 0001 0037 
+; 0001 0038     Uc_Select_led++;
 	INC  R12
-; 0001 0032     bit_left <<= (Uc_Select_led-1);
+; 0001 0039     bit_left <<= (Uc_Select_led-1);
 	MOV  R30,R12
 	SUBI R30,LOW(1)
 	MOV  R26,R21
 	RCALL __LSLB12
 	MOV  R21,R30
-; 0001 0033     if(Uc_Select_led > 8)
+; 0001 003A     if(Uc_Select_led > 8)
 	LDI  R30,LOW(8)
 	CP   R30,R12
 	BRSH _0x2000A
-; 0001 0034     {
-; 0001 0035         Uc_Select_led = 1;
+; 0001 003B     {
+; 0001 003C         Uc_Select_led = 1;
 	LDI  R30,LOW(1)
 	MOV  R12,R30
-; 0001 0036         bit_left = 0x01;
+; 0001 003D         bit_left = 0x01;
 	LDI  R21,LOW(1)
-; 0001 0037     }
-; 0001 0038     /* 7-seg 1*/
-; 0001 0039     data = Uint_data_led1/1000;
+; 0001 003E     }
+; 0001 003F     /* 7-seg 1*/
+; 0001 0040     data = Uint_data_led1/1000;
 _0x2000A:
 	RCALL SUBOPT_0x19
 	RCALL SUBOPT_0x1E
-; 0001 003A     byte1 = BCDLED[10];
-; 0001 003B     // byte1 = 0xFE;
-; 0001 003C     if((byte1 & bit_left)) byte3 |= 0x04;
-	BREQ _0x2000B
-	ORI  R19,LOW(4)
-; 0001 003D     data = Uint_data_led1/100%10;
-_0x2000B:
-	RCALL SUBOPT_0x19
+; 0001 0041     byte1 = BCDLED[10];
+; 0001 0042     if(Bit_led_1_warning == 1 && Uint_warning_count < (TIME_LED_BLINK/2))
+	SBIS 0x1E,0
+	RJMP _0x2000C
 	RCALL SUBOPT_0x1F
-; 0001 003E     byte1 = BCDLED[data];
-; 0001 003F     // byte1 = 0x06;
-; 0001 0040     if(byte1 & bit_left) byte3 |= 0x08;
-	RCALL SUBOPT_0x20
-	BREQ _0x2000C
-	ORI  R19,LOW(8)
-; 0001 0041     data = Uint_data_led1/10%10;
+	BRLO _0x2000D
 _0x2000C:
-	RCALL SUBOPT_0x19
-	RCALL SUBOPT_0x21
-	RCALL SUBOPT_0x22
-; 0001 0042     byte1 = BCDLED[data];
-; 0001 0043     byte1 |= 0x04;
-	RCALL SUBOPT_0x23
-; 0001 0044     // byte1 = 0x06;
-; 0001 0045     if(byte1 & bit_left) byte3 |= 0x10;
-	BREQ _0x2000D
-	ORI  R19,LOW(16)
-; 0001 0046     data = Uint_data_led1%10;
+	RJMP _0x2000B
 _0x2000D:
-	RCALL SUBOPT_0x19
-	RCALL SUBOPT_0x24
-; 0001 0047     byte1 = BCDLED[data];
-; 0001 0048     // byte1 = 0x06;
-; 0001 0049     if(byte1 & bit_left) byte2 |= 0x10;
+; 0001 0043     {
+; 0001 0044         byte1 = BCDLED[11];
+	RCALL SUBOPT_0x20
+; 0001 0045     }
+; 0001 0046     if((byte1 & bit_left)) byte3 |= 0x04;
+_0x2000B:
+	RCALL SUBOPT_0x21
 	BREQ _0x2000E
-	ORI  R16,LOW(16)
-; 0001 004A     /* 7-seg 2 */
-; 0001 004B     data = Uint_data_led2/1000;
+	ORI  R19,LOW(4)
+; 0001 0047 
+; 0001 0048     data = Uint_data_led1/100%10;
 _0x2000E:
+	RCALL SUBOPT_0x19
+	RCALL SUBOPT_0x22
+; 0001 0049     byte1 = BCDLED[data];
+; 0001 004A     if(Bit_led_1_warning == 1 && Uint_warning_count < (TIME_LED_BLINK/2))
+	SBIS 0x1E,0
+	RJMP _0x20010
+	RCALL SUBOPT_0x1F
+	BRLO _0x20011
+_0x20010:
+	RJMP _0x2000F
+_0x20011:
+; 0001 004B     {
+; 0001 004C         byte1 = BCDLED[11];
+	RCALL SUBOPT_0x20
+; 0001 004D     }
+; 0001 004E     if(byte1 & bit_left) byte3 |= 0x08;
+_0x2000F:
+	RCALL SUBOPT_0x21
+	BREQ _0x20012
+	ORI  R19,LOW(8)
+; 0001 004F     data = Uint_data_led1/10%10;
+_0x20012:
+	RCALL SUBOPT_0x19
+	RCALL SUBOPT_0x23
+	RCALL SUBOPT_0x24
+; 0001 0050     byte1 = BCDLED[data];
+; 0001 0051     byte1 |= 0x04;
+	ORI  R17,LOW(4)
+; 0001 0052     if(Bit_led_1_warning == 1 && Uint_warning_count < (TIME_LED_BLINK/2))
+	SBIS 0x1E,0
+	RJMP _0x20014
+	RCALL SUBOPT_0x1F
+	BRLO _0x20015
+_0x20014:
+	RJMP _0x20013
+_0x20015:
+; 0001 0053     {
+; 0001 0054         byte1 = BCDLED[11];
+	RCALL SUBOPT_0x20
+; 0001 0055     }
+; 0001 0056     if(byte1 & bit_left) byte3 |= 0x10;
+_0x20013:
+	RCALL SUBOPT_0x21
+	BREQ _0x20016
+	ORI  R19,LOW(16)
+; 0001 0057 
+; 0001 0058     data = Uint_data_led1%10;
+_0x20016:
+	RCALL SUBOPT_0x19
+	RCALL SUBOPT_0x25
+; 0001 0059     byte1 = BCDLED[data];
+; 0001 005A     if(Bit_led_1_warning == 1 && Uint_warning_count < (TIME_LED_BLINK/2))
+	SBIS 0x1E,0
+	RJMP _0x20018
+	RCALL SUBOPT_0x1F
+	BRLO _0x20019
+_0x20018:
+	RJMP _0x20017
+_0x20019:
+; 0001 005B     {
+; 0001 005C         byte1 = BCDLED[11];
+	RCALL SUBOPT_0x20
+; 0001 005D     }
+; 0001 005E     if(byte1 & bit_left) byte2 |= 0x10;
+_0x20017:
+	RCALL SUBOPT_0x21
+	BREQ _0x2001A
+	ORI  R16,LOW(16)
+; 0001 005F     /* 7-seg 2 */
+; 0001 0060     data = Uint_data_led2/1000;
+_0x2001A:
 	RCALL SUBOPT_0x13
 	RCALL SUBOPT_0x1E
-; 0001 004C     byte1 = BCDLED[10];
-; 0001 004D     if(byte1 & bit_left) byte2 |= 0x20;
-	BREQ _0x2000F
+; 0001 0061     byte1 = BCDLED[10];
+; 0001 0062     if(Bit_led_2_warning == 1 && Uint_warning_count < (TIME_LED_BLINK/2))
+	SBIS 0x1E,1
+	RJMP _0x2001C
+	RCALL SUBOPT_0x1F
+	BRLO _0x2001D
+_0x2001C:
+	RJMP _0x2001B
+_0x2001D:
+; 0001 0063     {
+; 0001 0064         byte1 = BCDLED[11];
+	RCALL SUBOPT_0x20
+; 0001 0065     }
+; 0001 0066     if(byte1 & bit_left) byte2 |= 0x20;
+_0x2001B:
+	RCALL SUBOPT_0x21
+	BREQ _0x2001E
 	ORI  R16,LOW(32)
-; 0001 004E     data = Uint_data_led2/100%10;
-_0x2000F:
+; 0001 0067 
+; 0001 0068     data = Uint_data_led2/100%10;
+_0x2001E:
 	RCALL SUBOPT_0x13
-	RCALL SUBOPT_0x1F
-; 0001 004F     byte1 = BCDLED[data];
-; 0001 0050     byte1 |= 0x04;
-	RCALL SUBOPT_0x23
-; 0001 0051     if(byte1 & bit_left) byte2 |= 0x08;
-	BREQ _0x20010
-	ORI  R16,LOW(8)
-; 0001 0052     data = Uint_data_led2/10%10;
-_0x20010:
-	RCALL SUBOPT_0x13
-	RCALL SUBOPT_0x21
 	RCALL SUBOPT_0x22
-; 0001 0053     byte1 = BCDLED[data];
-; 0001 0054     if(byte1 & bit_left) byte2 |= 0x04;
-	RCALL SUBOPT_0x20
-	BREQ _0x20011
-	ORI  R16,LOW(4)
-; 0001 0055     data = Uint_data_led2%10;
-_0x20011:
-	RCALL SUBOPT_0x13
-	RCALL SUBOPT_0x24
-; 0001 0056     byte1 = BCDLED[data];
-; 0001 0057     if(byte1 & bit_left) byte2 |= 0x01;
-	BREQ _0x20012
-	ORI  R16,LOW(1)
-; 0001 0058     /* 7-seg 3 */
-; 0001 0059     data = Uint_data_led3/1000;
-_0x20012:
-	RCALL SUBOPT_0x1B
-	RCALL SUBOPT_0x25
-; 0001 005A     byte1 = BCDLED[data];
-; 0001 005B     if(byte1 & bit_left) byte3 |= 0x20;
-	BREQ _0x20013
-	ORI  R19,LOW(32)
-; 0001 005C     data = Uint_data_led3/100%10;
-_0x20013:
-	RCALL SUBOPT_0x1B
-	RCALL SUBOPT_0x1F
-; 0001 005D     byte1 = BCDLED[data];
-; 0001 005E     // byte1 |= 0x80;
-; 0001 005F     if(byte1 & bit_left) byte3 |= 0x40;
-	RCALL SUBOPT_0x20
-	BREQ _0x20014
-	ORI  R19,LOW(64)
-; 0001 0060     data = Uint_data_led3/10%10;
-_0x20014:
-	RCALL SUBOPT_0x1B
-	RCALL SUBOPT_0x21
-	RCALL SUBOPT_0x22
-; 0001 0061     byte1 = BCDLED[data];
-; 0001 0062     byte1 |= 0x04;
-	RCALL SUBOPT_0x23
-; 0001 0063     if(byte1 & bit_left) byte3 |= 0x80;
-	BREQ _0x20015
-	ORI  R19,LOW(128)
-; 0001 0064     data = Uint_data_led3%10;
-_0x20015:
-	RCALL SUBOPT_0x1B
-	RCALL SUBOPT_0x24
-; 0001 0065     byte1 = BCDLED[data];
-; 0001 0066     if(byte1 & bit_left) byte3 |= 0x02;
-	BREQ _0x20016
-	ORI  R19,LOW(2)
-; 0001 0067     /* 7-seg 4 */
-; 0001 0068     data = Uint_data_led4/1000;
-_0x20016:
-	RCALL SUBOPT_0x16
-	RCALL SUBOPT_0x25
 ; 0001 0069     byte1 = BCDLED[data];
-; 0001 006A     if(byte1 & bit_left) byte3 |= 0x01; //2
-	BREQ _0x20017
-	ORI  R19,LOW(1)
-; 0001 006B     data = Uint_data_led4/100%10;
-_0x20017:
-	RCALL SUBOPT_0x16
+; 0001 006A     byte1 |= 0x04;
+	ORI  R17,LOW(4)
+; 0001 006B     if(Bit_led_2_warning == 1 && Uint_warning_count < (TIME_LED_BLINK/2))
+	SBIS 0x1E,1
+	RJMP _0x20020
 	RCALL SUBOPT_0x1F
-; 0001 006C     byte1 = BCDLED[data];
-; 0001 006D     byte1 |= 0x04;
-	RCALL SUBOPT_0x23
-; 0001 006E     if(byte1 & bit_left) byte2 |= 0x40;
-	BREQ _0x20018
-	ORI  R16,LOW(64)
-; 0001 006F     data = Uint_data_led4/10%10;
-_0x20018:
-	RCALL SUBOPT_0x16
-	RCALL SUBOPT_0x21
-	RCALL SUBOPT_0x22
-; 0001 0070     byte1 = BCDLED[data];
-; 0001 0071     // byte1 |= 0x80;
-; 0001 0072     if(byte1 & bit_left) byte2 |= 0x80; //7
+	BRLO _0x20021
+_0x20020:
+	RJMP _0x2001F
+_0x20021:
+; 0001 006C     {
+; 0001 006D         byte1 = BCDLED[11];
 	RCALL SUBOPT_0x20
-	BREQ _0x20019
-	ORI  R16,LOW(128)
-; 0001 0073     data = Uint_data_led4%10;
-_0x20019:
-	RCALL SUBOPT_0x16
+; 0001 006E     }
+; 0001 006F     if(byte1 & bit_left) byte2 |= 0x08;
+_0x2001F:
+	RCALL SUBOPT_0x21
+	BREQ _0x20022
+	ORI  R16,LOW(8)
+; 0001 0070 
+; 0001 0071     data = Uint_data_led2/10%10;
+_0x20022:
+	RCALL SUBOPT_0x13
+	RCALL SUBOPT_0x23
 	RCALL SUBOPT_0x24
-; 0001 0074     byte1 = BCDLED[data];
-; 0001 0075     if(byte1 & bit_left) byte2 |= 0x02;
-	BREQ _0x2001A
+; 0001 0072     byte1 = BCDLED[data];
+; 0001 0073     if(Bit_led_2_warning == 1 && Uint_warning_count < (TIME_LED_BLINK/2))
+	SBIS 0x1E,1
+	RJMP _0x20024
+	RCALL SUBOPT_0x1F
+	BRLO _0x20025
+_0x20024:
+	RJMP _0x20023
+_0x20025:
+; 0001 0074     {
+; 0001 0075         byte1 = BCDLED[11];
+	RCALL SUBOPT_0x20
+; 0001 0076     }
+; 0001 0077     if(byte1 & bit_left) byte2 |= 0x04;
+_0x20023:
+	RCALL SUBOPT_0x21
+	BREQ _0x20026
+	ORI  R16,LOW(4)
+; 0001 0078 
+; 0001 0079     data = Uint_data_led2%10;
+_0x20026:
+	RCALL SUBOPT_0x13
+	RCALL SUBOPT_0x25
+; 0001 007A     byte1 = BCDLED[data];
+; 0001 007B     if(Bit_led_2_warning == 1 && Uint_warning_count < (TIME_LED_BLINK/2))
+	SBIS 0x1E,1
+	RJMP _0x20028
+	RCALL SUBOPT_0x1F
+	BRLO _0x20029
+_0x20028:
+	RJMP _0x20027
+_0x20029:
+; 0001 007C     {
+; 0001 007D         byte1 = BCDLED[11];
+	RCALL SUBOPT_0x20
+; 0001 007E     }
+; 0001 007F     if(byte1 & bit_left) byte2 |= 0x01;
+_0x20027:
+	RCALL SUBOPT_0x21
+	BREQ _0x2002A
+	ORI  R16,LOW(1)
+; 0001 0080     /* 7-seg 3 */
+; 0001 0081     data = Uint_data_led3/1000;
+_0x2002A:
+	RCALL SUBOPT_0x1B
+	RCALL SUBOPT_0x26
+; 0001 0082     byte1 = BCDLED[data];
+; 0001 0083     if(Bit_led_3_warning == 1 && Uint_warning_count < (TIME_LED_BLINK/2))
+	SBIS 0x1E,2
+	RJMP _0x2002C
+	RCALL SUBOPT_0x1F
+	BRLO _0x2002D
+_0x2002C:
+	RJMP _0x2002B
+_0x2002D:
+; 0001 0084     {
+; 0001 0085         byte1 = BCDLED[11];
+	RCALL SUBOPT_0x20
+; 0001 0086     }
+; 0001 0087     if(byte1 & bit_left) byte3 |= 0x20;
+_0x2002B:
+	RCALL SUBOPT_0x21
+	BREQ _0x2002E
+	ORI  R19,LOW(32)
+; 0001 0088 
+; 0001 0089     data = Uint_data_led3/100%10;
+_0x2002E:
+	RCALL SUBOPT_0x1B
+	RCALL SUBOPT_0x22
+; 0001 008A     byte1 = BCDLED[data];
+; 0001 008B     if(Bit_led_3_warning == 1 && Uint_warning_count < (TIME_LED_BLINK/2))
+	SBIS 0x1E,2
+	RJMP _0x20030
+	RCALL SUBOPT_0x1F
+	BRLO _0x20031
+_0x20030:
+	RJMP _0x2002F
+_0x20031:
+; 0001 008C     {
+; 0001 008D         byte1 = BCDLED[11];
+	RCALL SUBOPT_0x20
+; 0001 008E     }
+; 0001 008F     if(byte1 & bit_left) byte3 |= 0x40;
+_0x2002F:
+	RCALL SUBOPT_0x21
+	BREQ _0x20032
+	ORI  R19,LOW(64)
+; 0001 0090 
+; 0001 0091     data = Uint_data_led3/10%10;
+_0x20032:
+	RCALL SUBOPT_0x1B
+	RCALL SUBOPT_0x23
+	RCALL SUBOPT_0x24
+; 0001 0092     byte1 = BCDLED[data];
+; 0001 0093     byte1 |= 0x04;
+	ORI  R17,LOW(4)
+; 0001 0094     if(Bit_led_3_warning == 1 && Uint_warning_count < (TIME_LED_BLINK/2))
+	SBIS 0x1E,2
+	RJMP _0x20034
+	RCALL SUBOPT_0x1F
+	BRLO _0x20035
+_0x20034:
+	RJMP _0x20033
+_0x20035:
+; 0001 0095     {
+; 0001 0096         byte1 = BCDLED[11];
+	RCALL SUBOPT_0x20
+; 0001 0097     }
+; 0001 0098     if(byte1 & bit_left) byte3 |= 0x80;
+_0x20033:
+	RCALL SUBOPT_0x21
+	BREQ _0x20036
+	ORI  R19,LOW(128)
+; 0001 0099 
+; 0001 009A     data = Uint_data_led3%10;
+_0x20036:
+	RCALL SUBOPT_0x1B
+	RCALL SUBOPT_0x25
+; 0001 009B     byte1 = BCDLED[data];
+; 0001 009C     if(Bit_led_3_warning == 1 && Uint_warning_count < (TIME_LED_BLINK/2))
+	SBIS 0x1E,2
+	RJMP _0x20038
+	RCALL SUBOPT_0x1F
+	BRLO _0x20039
+_0x20038:
+	RJMP _0x20037
+_0x20039:
+; 0001 009D     {
+; 0001 009E         byte1 = BCDLED[11];
+	RCALL SUBOPT_0x20
+; 0001 009F     }
+; 0001 00A0     if(byte1 & bit_left) byte3 |= 0x02;
+_0x20037:
+	RCALL SUBOPT_0x21
+	BREQ _0x2003A
+	ORI  R19,LOW(2)
+; 0001 00A1     /* 7-seg 4 */
+; 0001 00A2     data = Uint_data_led4/1000;
+_0x2003A:
+	RCALL SUBOPT_0x16
+	RCALL SUBOPT_0x26
+; 0001 00A3     byte1 = BCDLED[data];
+; 0001 00A4     if(Bit_led_4_warning == 1 && Uint_warning_count < (TIME_LED_BLINK/2))
+	SBIS 0x1E,3
+	RJMP _0x2003C
+	RCALL SUBOPT_0x1F
+	BRLO _0x2003D
+_0x2003C:
+	RJMP _0x2003B
+_0x2003D:
+; 0001 00A5     {
+; 0001 00A6         byte1 = BCDLED[11];
+	RCALL SUBOPT_0x20
+; 0001 00A7     }
+; 0001 00A8     if(byte1 & bit_left) byte3 |= 0x01; //2
+_0x2003B:
+	RCALL SUBOPT_0x21
+	BREQ _0x2003E
+	ORI  R19,LOW(1)
+; 0001 00A9 
+; 0001 00AA     data = Uint_data_led4/100%10;
+_0x2003E:
+	RCALL SUBOPT_0x16
+	RCALL SUBOPT_0x22
+; 0001 00AB     byte1 = BCDLED[data];
+; 0001 00AC     byte1 |= 0x04;
+	ORI  R17,LOW(4)
+; 0001 00AD     if(Bit_led_4_warning == 1 && Uint_warning_count < (TIME_LED_BLINK/2))
+	SBIS 0x1E,3
+	RJMP _0x20040
+	RCALL SUBOPT_0x1F
+	BRLO _0x20041
+_0x20040:
+	RJMP _0x2003F
+_0x20041:
+; 0001 00AE     {
+; 0001 00AF         byte1 = BCDLED[11];
+	RCALL SUBOPT_0x20
+; 0001 00B0     }
+; 0001 00B1     if(byte1 & bit_left) byte2 |= 0x40;
+_0x2003F:
+	RCALL SUBOPT_0x21
+	BREQ _0x20042
+	ORI  R16,LOW(64)
+; 0001 00B2 
+; 0001 00B3     data = Uint_data_led4/10%10;
+_0x20042:
+	RCALL SUBOPT_0x16
+	RCALL SUBOPT_0x23
+	RCALL SUBOPT_0x24
+; 0001 00B4     byte1 = BCDLED[data];
+; 0001 00B5     if(Bit_led_4_warning == 1 && Uint_warning_count < (TIME_LED_BLINK/2))
+	SBIS 0x1E,3
+	RJMP _0x20044
+	RCALL SUBOPT_0x1F
+	BRLO _0x20045
+_0x20044:
+	RJMP _0x20043
+_0x20045:
+; 0001 00B6     {
+; 0001 00B7         byte1 = BCDLED[11];
+	RCALL SUBOPT_0x20
+; 0001 00B8     }
+; 0001 00B9     if(byte1 & bit_left) byte2 |= 0x80; //7
+_0x20043:
+	RCALL SUBOPT_0x21
+	BREQ _0x20046
+	ORI  R16,LOW(128)
+; 0001 00BA 
+; 0001 00BB     data = Uint_data_led4%10;
+_0x20046:
+	RCALL SUBOPT_0x16
+	RCALL SUBOPT_0x25
+; 0001 00BC     byte1 = BCDLED[data];
+; 0001 00BD     if(Bit_led_4_warning == 1 && Uint_warning_count < (TIME_LED_BLINK/2))
+	SBIS 0x1E,3
+	RJMP _0x20048
+	RCALL SUBOPT_0x1F
+	BRLO _0x20049
+_0x20048:
+	RJMP _0x20047
+_0x20049:
+; 0001 00BE     {
+; 0001 00BF         byte1 = BCDLED[11];
+	RCALL SUBOPT_0x20
+; 0001 00C0     }
+; 0001 00C1     if(byte1 & bit_left) byte2 |= 0x02;
+_0x20047:
+	RCALL SUBOPT_0x21
+	BREQ _0x2004A
 	ORI  R16,LOW(2)
-; 0001 0076     bit_left = 0xff- bit_left;
-_0x2001A:
+; 0001 00C2 
+; 0001 00C3     bit_left = 0xff- bit_left;
+_0x2004A:
 	LDI  R30,LOW(255)
 	SUB  R30,R21
 	MOV  R21,R30
-; 0001 0077     SEND_DATA_LED(3,byte3,byte2,bit_left);
+; 0001 00C4     SEND_DATA_LED(3,byte3,byte2,bit_left);
 	LDI  R30,LOW(3)
 	ST   -Y,R30
 	ST   -Y,R19
 	ST   -Y,R16
 	MOV  R26,R21
 	RCALL _SEND_DATA_LED
-; 0001 0078 }
+; 0001 00C5 
+; 0001 00C6     Uint_warning_count++;
+	LDI  R26,LOW(_Uint_warning_count)
+	LDI  R27,HIGH(_Uint_warning_count)
+	RCALL SUBOPT_0x2
+; 0001 00C7     if(Uint_warning_count >= TIME_LED_BLINK)   Uint_warning_count = 0;
+	LDS  R26,_Uint_warning_count
+	LDS  R27,_Uint_warning_count+1
+	CPI  R26,LOW(0x1F4)
+	LDI  R30,HIGH(0x1F4)
+	CPC  R27,R30
+	BRLO _0x2004B
+	LDI  R30,LOW(0)
+	STS  _Uint_warning_count,R30
+	STS  _Uint_warning_count+1,R30
+; 0001 00C8 }
+_0x2004B:
 	RCALL __LOADLOCR6
 	ADIW R28,6
 	RET
 ; .FEND
 ;
-;#include "SPI_SOFTWARE.h"
+; 0002 0001 #include "SPI_SOFTWARE.h"
 	#ifndef __SLEEP_DEFINED__
 	#define __SLEEP_DEFINED__
 	.EQU __se_bit=0x01
@@ -2676,7 +2925,9 @@ _0x40006:
 ; 0002 000B         data <<= 1;
 _0x40009:
 	LDD  R30,Y+2
+	LDI  R31,0
 	LSL  R30
+	ROL  R31
 	STD  Y+2,R30
 ; 0002 000C         DO_SPI_SCK_HIGHT;
 	SBI  0x5,5
@@ -2724,8 +2975,10 @@ _Uint_Turnoff_relay_timer:
 	.BYTE 0x2
 _Uint_Timer_Display:
 	.BYTE 0x2
+_Uint_warning_count:
+	.BYTE 0x2
 _BCDLED:
-	.BYTE 0xB
+	.BYTE 0xC
 
 	.CSEG
 ;OPTIMIZER ADDED SUBROUTINE, CALLED 2 TIMES, CODE SIZE REDUCTION:2 WORDS
@@ -2744,7 +2997,7 @@ SUBOPT_0x1:
 	CPC  R27,R30
 	RET
 
-;OPTIMIZER ADDED SUBROUTINE, CALLED 2 TIMES, CODE SIZE REDUCTION:2 WORDS
+;OPTIMIZER ADDED SUBROUTINE, CALLED 3 TIMES, CODE SIZE REDUCTION:6 WORDS
 SUBOPT_0x2:
 	LD   R30,X+
 	LD   R31,X+
@@ -2969,19 +3222,37 @@ SUBOPT_0x1D:
 	ADIW R26,1
 	RJMP SUBOPT_0x8
 
-;OPTIMIZER ADDED SUBROUTINE, CALLED 2 TIMES, CODE SIZE REDUCTION:5 WORDS
+;OPTIMIZER ADDED SUBROUTINE, CALLED 2 TIMES, CODE SIZE REDUCTION:3 WORDS
 SUBOPT_0x1E:
 	LDI  R30,LOW(1000)
 	LDI  R31,HIGH(1000)
 	RCALL __DIVW21U
 	MOV  R18,R30
 	__GETBRMN 17,_BCDLED,10
+	RET
+
+;OPTIMIZER ADDED SUBROUTINE, CALLED 16 TIMES, CODE SIZE REDUCTION:88 WORDS
+SUBOPT_0x1F:
+	LDS  R26,_Uint_warning_count
+	LDS  R27,_Uint_warning_count+1
+	CPI  R26,LOW(0xFA)
+	LDI  R30,HIGH(0xFA)
+	CPC  R27,R30
+	RET
+
+;OPTIMIZER ADDED SUBROUTINE, CALLED 16 TIMES, CODE SIZE REDUCTION:13 WORDS
+SUBOPT_0x20:
+	__GETBRMN 17,_BCDLED,11
+	RET
+
+;OPTIMIZER ADDED SUBROUTINE, CALLED 16 TIMES, CODE SIZE REDUCTION:13 WORDS
+SUBOPT_0x21:
 	MOV  R30,R21
 	AND  R30,R17
 	RET
 
 ;OPTIMIZER ADDED SUBROUTINE, CALLED 4 TIMES, CODE SIZE REDUCTION:34 WORDS
-SUBOPT_0x1F:
+SUBOPT_0x22:
 	LDI  R30,LOW(100)
 	LDI  R31,HIGH(100)
 	RCALL __DIVW21U
@@ -2996,23 +3267,17 @@ SUBOPT_0x1F:
 	LD   R17,Z
 	RET
 
-;OPTIMIZER ADDED SUBROUTINE, CALLED 14 TIMES, CODE SIZE REDUCTION:11 WORDS
-SUBOPT_0x20:
-	MOV  R30,R21
-	AND  R30,R17
-	RET
-
 ;OPTIMIZER ADDED SUBROUTINE, CALLED 12 TIMES, CODE SIZE REDUCTION:9 WORDS
-SUBOPT_0x21:
+SUBOPT_0x23:
 	LDI  R30,LOW(10)
 	LDI  R31,HIGH(10)
 	RET
 
 ;OPTIMIZER ADDED SUBROUTINE, CALLED 4 TIMES, CODE SIZE REDUCTION:25 WORDS
-SUBOPT_0x22:
+SUBOPT_0x24:
 	RCALL __DIVW21U
 	MOVW R26,R30
-	RCALL SUBOPT_0x21
+	RCALL SUBOPT_0x23
 	RCALL __MODW21U
 	MOV  R18,R30
 	LDI  R31,0
@@ -3021,24 +3286,19 @@ SUBOPT_0x22:
 	LD   R17,Z
 	RET
 
-;OPTIMIZER ADDED SUBROUTINE, CALLED 4 TIMES, CODE SIZE REDUCTION:1 WORDS
-SUBOPT_0x23:
-	ORI  R17,LOW(4)
-	RJMP SUBOPT_0x20
-
-;OPTIMIZER ADDED SUBROUTINE, CALLED 4 TIMES, CODE SIZE REDUCTION:22 WORDS
-SUBOPT_0x24:
-	RCALL SUBOPT_0x21
+;OPTIMIZER ADDED SUBROUTINE, CALLED 4 TIMES, CODE SIZE REDUCTION:19 WORDS
+SUBOPT_0x25:
+	RCALL SUBOPT_0x23
 	RCALL __MODW21U
 	MOV  R18,R30
 	LDI  R31,0
 	SUBI R30,LOW(-_BCDLED)
 	SBCI R31,HIGH(-_BCDLED)
 	LD   R17,Z
-	RJMP SUBOPT_0x20
+	RET
 
-;OPTIMIZER ADDED SUBROUTINE, CALLED 2 TIMES, CODE SIZE REDUCTION:7 WORDS
-SUBOPT_0x25:
+;OPTIMIZER ADDED SUBROUTINE, CALLED 2 TIMES, CODE SIZE REDUCTION:6 WORDS
+SUBOPT_0x26:
 	LDI  R30,LOW(1000)
 	LDI  R31,HIGH(1000)
 	RCALL __DIVW21U
@@ -3047,7 +3307,7 @@ SUBOPT_0x25:
 	SUBI R30,LOW(-_BCDLED)
 	SBCI R31,HIGH(-_BCDLED)
 	LD   R17,Z
-	RJMP SUBOPT_0x20
+	RET
 
 
 	.CSEG

@@ -171,6 +171,7 @@ void    PROTECT(void)
             Uc_I_Negative_Over = 11;
             Uc_I_Negative_Under = 0;
             Bit_I_Negative_Warning = 1;
+            Bit_led_2_warning = 1;
         }
     }
     else
@@ -181,6 +182,7 @@ void    PROTECT(void)
             Uc_I_Negative_Under = 11;
             Uc_I_Negative_Over = 0;
             Bit_I_Negative_Warning = 0;
+            Bit_led_2_warning = 0;
         }
     }
 
@@ -226,6 +228,7 @@ void    PROTECT(void)
             Uc_I_Positive_Over = 11;
             Uc_I_Positive_Under = 0;
             Bit_I_Positive_Warning = 1;
+            Bit_led_4_warning = 1;
         }
     }
     else
@@ -236,6 +239,7 @@ void    PROTECT(void)
             Uc_I_Positive_Under = 11;
             Uc_I_Positive_Over = 0;
             Bit_I_Positive_Warning = 0;
+            Bit_led_4_warning = 0;
         }
     }
     /* U Negative */

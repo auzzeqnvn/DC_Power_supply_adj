@@ -126,8 +126,8 @@ WatchAVR8LAutoVariables=0
 UseEEPROMLocation0=1
 RebuildAll=0
 LinkageInformationPresent=1
-COFFileTimeStamp=1300140036
-Build=286
+COFFileTimeStamp=1300389603
+Build=287
 [DefinedSymbolsDebug]
 Count=0
 [Compiler]
@@ -229,7 +229,7 @@ UseEEPROMLocation0=1
 RebuildAll=1
 LinkageInformationPresent=0
 COFFileTimeStamp=-1
-Build=286
+Build=287
 IncludePath0=
 IncludePath1=
 IncludePath2=
@@ -481,7 +481,7 @@ F6=D:\My Data\TanPhat\DC_Power_supply_adj\spi.c
 [BuildInfoCompiler]
 L1=Build configuration: Debug
 L2=Chip: ATmega88P
-L3=Clock frequency: 8,000000 MHz
+L3=Clock frequency: 8.000000 MHz
 L4=Program type: Application
 L5=Memory model: Small
 L6=Optimize for: Size
@@ -495,8 +495,8 @@ L13=Enhanced function parameters passing: Yes
 L14=Automatic register allocation: Yes
 L15=Smart register allocation: Yes
 L16=
-L17=Build: 285
-L18=1001 line(s) compiled
+L17=Build: 286
+L18=1089 line(s) compiled
 L19=No errors
 L20=No warnings
 L21=
@@ -507,30 +507,30 @@ L25=Data Stack area: 0x100 to 0x1FF
 L26=Data Stack size: 256 byte(s)
 L27=Estimated Data Stack usage: 103 byte(s)
 L28=
-L29=RAM Global variables area: 0x200 to 0x306
-L30=RAM Global variables size: 263 byte(s)
+L29=RAM Global variables area: 0x200 to 0x309
+L30=RAM Global variables size: 266 byte(s)
 L31=
-L32=Hardware Stack area: 0x307 to 0x4FF
-L33=Hardware Stack size: 505 byte(s)
+L32=Hardware Stack area: 0x30A to 0x4FF
+L33=Hardware Stack size: 502 byte(s)
 L34=
 L35=Heap size: 0 byte(s)
 Lines=39
 L36=
-L37=EEPROM usage: 0 byte(s), 0,0% of EEPROM
-L38=Program size: 1430 words (2860 bytes), 34,9% of FLASH
-L39=553 words (1106 bytes), 27,9% reduced by Code Compression
+L37=EEPROM usage: 0 byte(s), 0.0% of EEPROM
+L38=Program size: 1563 words (3126 bytes), 38.2% of FLASH
+L39=653 words (1306 bytes), 29.5% reduced by Code Compression
 [BuildInfoAssembler]
 Lines=12
 L1=AVRASM: AVR macro assembler 2.1.30 (build 592 Nov  7 2008 12:38:17)
 L2=Copyright (C) 1995-2008 ATMEL Corporation
 L3=
-L4=D:\Mydata\Work\Tan Phat\Bien doi nguon 3 phase\Firmware_2\DC_Power_supply_adj\Debug\List\DC_Power_Supply_Adj_Protect.asm(3521): No EEPROM data, deleting D:\Mydata\Work\Tan Phat\Bien doi nguon 3 phase\Firmware_2\DC_Power_supply_adj\Debug\Exe\DC_Power_Supply_Adj_Protect.eep
+L4=D:\My Data\TanPhat\DC_Power_supply_adj\Debug\List\DC_Power_Supply_Adj_Protect.asm(3781): No EEPROM data, deleting D:\My Data\TanPhat\DC_Power_supply_adj\Debug\Exe\DC_Power_Supply_Adj_Protect.eep
 L5=
 L6=ATmega88P memory use summary [bytes]:
 L7=Segment   Begin    End      Code   Data   Used    Size   Use%
 L8=---------------------------------------------------------------
-L9=[.cseg] 0x000000 0x000b2c   2824     36   2860    8192  34.9%
-L10=[.dseg] 0x000100 0x000307      0    263    263    1024  25.7%
+L9=[.cseg] 0x000000 0x000c36   3090     36   3126    8192  38.2%
+L10=[.dseg] 0x000100 0x00030a      0    266    266    1024  26.0%
 L11=[.eseg] 0x000000 0x000000      0      0      0     512   0.0%
 L12=
 [Bookmarks0]
@@ -538,26 +538,9 @@ Row=0
 Column=0
 ScrollPosX=0
 ScrollPosY=0
-TimeStamp=1300140101
+TimeStamp=1300401965
 [FoldedCode1]
 Blocks=0
-[Header5]
-Files=4
-F1=scan_led.h
-F2=SPI_SOFTWARE.h
-F3=C:\cvavr\inc\mega88.h
-F4=C:\cvavr\inc\mega168_bits.h
-[Header6]
-Files=3
-F1=SPI_SOFTWARE.h
-F2=C:\cvavr\inc\mega88.h
-F3=C:\cvavr\inc\mega168_bits.h
-[Header4]
-Files=4
-F1=C:\cvavr\inc\mega88.h
-F2=C:\cvavr\inc\mega168_bits.h
-F3=scan_led.h
-F4=C:\cvavr\inc\delay.h
 [Header3]
 Files=3
 F1=SPI_SOFTWARE.h
@@ -570,6 +553,23 @@ F2=C:\cvavr\inc\mega168_bits.h
 F3=scan_led.h
 F4=C:\cvavr\inc\delay.h
 [Header2]
+Files=4
+F1=scan_led.h
+F2=SPI_SOFTWARE.h
+F3=C:\cvavr\inc\mega88.h
+F4=C:\cvavr\inc\mega168_bits.h
+[Header4]
+Files=4
+F1=C:\cvavr\inc\mega88.h
+F2=C:\cvavr\inc\mega168_bits.h
+F3=scan_led.h
+F4=C:\cvavr\inc\delay.h
+[Header6]
+Files=3
+F1=SPI_SOFTWARE.h
+F2=C:\cvavr\inc\mega88.h
+F3=C:\cvavr\inc\mega168_bits.h
+[Header5]
 Files=4
 F1=scan_led.h
 F2=SPI_SOFTWARE.h

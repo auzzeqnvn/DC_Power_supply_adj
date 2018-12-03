@@ -11,7 +11,8 @@ Uint_I_Positive_Buff                                                            
 Uint_I_Negative_Buff                                                              0x02BC      60
 Uint_Turnoff_relay_timer                                                          0x02F8       2
 Uint_Timer_Display                                                                0x02FA       2
-BCDLED                                                                            0x02FC      11
+Uint_warning_count                                                                0x02FC       2
+BCDLED                                                                            0x02FE      12
 
 EEPROM Allocation [bytes]
 Variable                                                                          Address   Size
@@ -29,10 +30,14 @@ Uc_U_Positive_Under                                                             
 Uc_I_Negative_Under                                                               R11          1
 Uc_U_Negative_Under                                                               R10          1
 Uc_Buffer_count                                                                   R13          1
-Bit_I_Positive_Warning                                                            GPIOR0.0  1bit
-Bit_U_Positive_Warning                                                            GPIOR0.1  1bit
-Bit_I_Negative_Warning                                                            GPIOR0.2  1bit
-Bit_U_Negative_Warning                                                            GPIOR0.3  1bit
+Bit_I_Positive_Warning                                                            GPIOR0.4  1bit
+Bit_U_Positive_Warning                                                            GPIOR0.5  1bit
+Bit_I_Negative_Warning                                                            GPIOR0.6  1bit
+Bit_U_Negative_Warning                                                            GPIOR0.7  1bit
+Bit_led_1_warning                                                                 GPIOR0.0  1bit
+Bit_led_2_warning                                                                 GPIOR0.1  1bit
+Bit_led_3_warning                                                                 GPIOR0.2  1bit
+Bit_led_4_warning                                                                 GPIOR0.3  1bit
 Uc_Select_led                                                                     R12          1
 
 FLASH Allocation [words]
@@ -43,5 +48,5 @@ read_adc                                                                        
 PROTECT                                                                           0x0009D    378
 main                                                                              0x00217     93
 SEND_DATA_LED                                                                     0x00274     41
-SCAN_LED                                                                          0x0029D    105
-SPI_SENDBYTE                                                                      0x00306     27
+SCAN_LED                                                                          0x0029D    229
+SPI_SENDBYTE                                                                      0x00382     29

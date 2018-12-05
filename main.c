@@ -38,20 +38,22 @@ Data Stack size         : 256
 #define PROTECT_ON   CONTROL_RELAY  = 1
 #define PROTECT_OFF   CONTROL_RELAY  = 0
 
-#define ADC_I_POSITIVE_SET  300
+#define ADC_I_POSITIVE_SET  550
 #define ADC_U_POSITIVE_SET  300
-#define ADC_I_NEGATIVE_SET  300
+#define ADC_I_NEGATIVE_SET  550
 #define ADC_U_NEGATIVE_SET  300
 
-#define ADC_I_POSITIVE_RATIO  3.056152//2.894736
+#define ADC_I_POSITIVE_RATIO  2.996655646//3.105845528//3.056152
 #define ADC_U_POSITIVE_RATIO  370
-#define ADC_I_NEGATIVE_RATIO  3.129425
+#define ADC_I_NEGATIVE_RATIO  3.16656554//3.076741
 #define ADC_U_NEGATIVE_RATIO  370
 
-#define TIME_UPDATE_DISPLAY 200
+#define TIME_UPDATE_DISPLAY 150
 
-#define ADC_I_POSITIVE_ZERO 888
-#define ADC_I_NEGATIVE_ZERO 883
+#define ADC_I_POSITIVE_ZERO 888//880
+#define ADC_I_NEGATIVE_ZERO 883//878
+
+#define CALIB   0
 
 #define NUM_SAMPLE  30
 #define NUM_FILTER  10
@@ -123,10 +125,6 @@ void    PROTECT(void)
 
     /* I Negative */
     Uint_ADC_Value = (unsigned int) read_adc(ADC_I_NEGATIVE);
-    // Uint_data_led2 = Uint_ADC_Value;
-    // if(Uint_ADC_Value > ADC_I_NEGATIVE_ZERO)   Uint_ADC_Value = Uint_ADC_Value - ADC_I_NEGATIVE_ZERO;
-    // else    Uint_ADC_Value = 0;
-    // Uint_data_led2 = Uint_ADC_Value;
     Uint_I_Negative_Buff[Uc_Buffer_count] = Uint_ADC_Value;
     
     if(Uint_Timer_Display >= TIME_UPDATE_DISPLAY)
@@ -155,15 +153,16 @@ void    PROTECT(void)
         {
             Ul_Sum += Uint_Buff_Temp[Uc_Loop_count];
         }
-        // Uint_data_led2 = (unsigned int)((float)Ul_Sum*ADC_I_NEGATIVE_RATIO/(NUM_SAMPLE-2*NUM_FILTER));
         Uint_temp = (unsigned int)((float)Ul_Sum/(NUM_SAMPLE-2*NUM_FILTER));
-        // Uint_data_led1 = Uint_temp;
+        #if CALIB
+        Uint_data_led4 = Uint_temp;
+        #else
         if(Uint_temp < ADC_I_NEGATIVE_ZERO) Uint_temp = ADC_I_NEGATIVE_ZERO - Uint_temp;
         else    Uint_temp = 0;
-        Uint_data_led2 = Uint_temp*ADC_I_NEGATIVE_RATIO;
-
+        Uint_data_led4 = Uint_temp*ADC_I_NEGATIVE_RATIO;
+        #endif
     }
-    if(Uint_data_led2 > ADC_I_NEGATIVE_SET)
+    if(Uint_data_led4 > ADC_I_NEGATIVE_SET)
     {
         Uc_I_Negative_Over++;
         if(Uc_I_Negative_Over > 10)
@@ -171,7 +170,7 @@ void    PROTECT(void)
             Uc_I_Negative_Over = 11;
             Uc_I_Negative_Under = 0;
             Bit_I_Negative_Warning = 1;
-            Bit_led_2_warning = 1;
+            Bit_led_4_warning = 1;
         }
     }
     else
@@ -182,14 +181,16 @@ void    PROTECT(void)
             Uc_I_Negative_Under = 11;
             Uc_I_Negative_Over = 0;
             Bit_I_Negative_Warning = 0;
-            Bit_led_2_warning = 0;
+            Bit_led_4_warning = 0;
         }
     }
 
     /* I Positive */
     Uint_ADC_Value = read_adc(ADC_I_POSITIVE);
+    #if !CALIB
     if(Uint_ADC_Value <= ADC_I_POSITIVE_ZERO)   Uint_ADC_Value = ADC_I_POSITIVE_ZERO - Uint_ADC_Value;
     else    Uint_ADC_Value = 0;
+    #endif
     Uint_I_Positive_Buff[Uc_Buffer_count] = Uint_ADC_Value;
     if(Uint_Timer_Display >= TIME_UPDATE_DISPLAY)
     {
@@ -217,10 +218,15 @@ void    PROTECT(void)
         {
             Ul_Sum += Uint_Buff_Temp[Uc_Loop_count];
         }
-        Uint_data_led4 = (unsigned int)((float)Ul_Sum*ADC_I_POSITIVE_RATIO/(NUM_SAMPLE-2*NUM_FILTER));
-        // Uint_data_led4 = (unsigned int)((float)Ul_Sum/(NUM_SAMPLE-2*NUM_FILTER));
+        #if !CALIB
+        Ul_Sum = Ul_Sum/(NUM_SAMPLE-2*NUM_FILTER);
+        // Uint_data_led4 = Ul_Sum;
+        Uint_data_led2 = (unsigned int)((float)Ul_Sum*ADC_I_POSITIVE_RATIO);
+        #else
+        Uint_data_led2 = (unsigned int)((float)Ul_Sum/(NUM_SAMPLE-2*NUM_FILTER));
+        #endif
     }
-    if(Uint_data_led4 > ADC_I_POSITIVE_SET)
+    if(Uint_data_led2 > ADC_I_POSITIVE_SET)
     {
         Uc_I_Positive_Over++;
         if(Uc_I_Positive_Over > 10)
@@ -228,7 +234,7 @@ void    PROTECT(void)
             Uc_I_Positive_Over = 11;
             Uc_I_Positive_Under = 0;
             Bit_I_Positive_Warning = 1;
-            Bit_led_4_warning = 1;
+            Bit_led_2_warning = 1;
         }
     }
     else
@@ -239,7 +245,7 @@ void    PROTECT(void)
             Uc_I_Positive_Under = 11;
             Uc_I_Positive_Over = 0;
             Bit_I_Positive_Warning = 0;
-            Bit_led_4_warning = 0;
+            Bit_led_2_warning = 0;
         }
     }
     /* U Negative */
@@ -270,27 +276,7 @@ void    PROTECT(void)
         {
             Ul_Sum += Uint_Buff_Temp[Uc_Loop_count];
         }
-        Uint_data_led1 = (unsigned int)((float)Ul_Sum*ADC_U_NEGATIVE_RATIO/(1024*(NUM_SAMPLE-2*NUM_FILTER)));
-    }
-    if(Uint_data_led1 > ADC_U_NEGATIVE_SET)
-    {
-        Uc_U_Negative_Over++;
-        if(Uc_U_Negative_Over > 10)
-        {
-            Uc_U_Negative_Over = 11;
-            Uc_U_Negative_Under = 0;
-            Bit_U_Negative_Warning = 1;
-        }
-    }
-    else
-    {
-        Uc_U_Negative_Under++;
-        if(Uc_U_Negative_Under > 10)
-        {
-            Uc_U_Negative_Under = 11;
-            Uc_U_Negative_Over = 0;
-            Bit_U_Negative_Warning = 0;
-        }
+        Uint_data_led3 = (unsigned int)((float)Ul_Sum*ADC_U_NEGATIVE_RATIO/(1024*(NUM_SAMPLE-2*NUM_FILTER)));
     }
     /* U Positive */
     Uint_U_Positive_Buff[Uc_Buffer_count] = read_adc(ADC_U_POSITIVE);
@@ -320,28 +306,8 @@ void    PROTECT(void)
         {
             Ul_Sum += Uint_Buff_Temp[Uc_Loop_count];
         }
-        Uint_data_led3 = (unsigned int)((float)Ul_Sum*ADC_U_POSITIVE_RATIO/(1024*(NUM_SAMPLE-2*NUM_FILTER)));
+        Uint_data_led1 = (unsigned int)((float)Ul_Sum*ADC_U_POSITIVE_RATIO/(1024*(NUM_SAMPLE-2*NUM_FILTER)));
         Uint_Timer_Display = 0;
-    }
-    if(Uint_data_led3 > ADC_U_POSITIVE_SET)
-    {
-        Uc_U_Positive_Over++;
-        if(Uc_U_Positive_Over > 10)
-        {
-            Uc_U_Positive_Over = 11;
-            Uc_U_Positive_Under = 0;
-            Bit_U_Positive_Warning = 1;
-        }
-    }
-    else
-    {
-        Uc_U_Positive_Under++;
-        if(Uc_U_Positive_Under > 10)
-        {
-            Uc_U_Positive_Under = 11;
-            Uc_U_Positive_Over = 0;
-            Bit_U_Positive_Warning = 0;
-        }
     }
     Uc_Buffer_count++;
     if(Uc_Buffer_count >= NUM_SAMPLE)    Uc_Buffer_count = 0;

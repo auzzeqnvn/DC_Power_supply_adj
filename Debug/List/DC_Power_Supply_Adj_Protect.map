@@ -45,8 +45,8 @@ Function                                                                        
 ------------------------------------------------------------------------------------------------
 timer1_ovf_isr                                                                    0x0005A     40
 read_adc                                                                          0x00082     27
-PROTECT                                                                           0x0009D    378
-main                                                                              0x00217     93
-SEND_DATA_LED                                                                     0x00274     41
-SCAN_LED                                                                          0x0029D    229
-SPI_SENDBYTE                                                                      0x00382     29
+PROTECT                                                                           0x0009D    374
+main                                                                              0x00213     93
+SEND_DATA_LED                                                                     0x00270     41
+SCAN_LED                                                                          0x00299    234
+SPI_SENDBYTE                                                                      0x00383     27

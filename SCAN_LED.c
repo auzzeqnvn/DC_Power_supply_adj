@@ -62,7 +62,7 @@ void    SCAN_LED(void)
     }
     /* 7-seg 1*/
     data = Uint_data_led1/1000;
-    byte1 = BCDLED[10];
+    byte1 = BCDLED[data];
     if(Bit_led_1_warning == 1 && Uint_warning_count < (TIME_LED_BLINK/2))
     {
         byte1 = BCDLED[11];
@@ -94,7 +94,7 @@ void    SCAN_LED(void)
     if(byte1 & bit_left) byte2 |= 0x10;
     /* 7-seg 2 */
     data = Uint_data_led2/1000;
-    byte1 = BCDLED[10];
+    byte1 = BCDLED[data];
     if(Bit_led_2_warning == 1 && Uint_warning_count < (TIME_LED_BLINK/2))
     {
         byte1 = BCDLED[11];
@@ -127,7 +127,7 @@ void    SCAN_LED(void)
     if(byte1 & bit_left) byte2 |= 0x01;
     /* 7-seg 3 */
     data = Uint_data_led3/1000;
-    byte1 = BCDLED[data];
+    byte1 = BCDLED[10];
     if(Bit_led_3_warning == 1 && Uint_warning_count < (TIME_LED_BLINK/2))
     {
         byte1 = BCDLED[11];

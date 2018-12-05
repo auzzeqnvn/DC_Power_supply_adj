@@ -1,6 +1,6 @@
 
 #define NUM_LED_SCAN 2
-#define TIME_LED_BLINK  500
+#define TIME_LED_BLINK  250
 
 
 
